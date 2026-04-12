@@ -19,5 +19,75 @@
 #include QMK_KEYBOARD_H
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    [0] = LAYOUT( DRAG_SCROLL )
+[0] = LAYOUT( QK_MOUSE_BUTTON_1 )
 };
+
+bool is_scrolling = false;
+
+int16_t scroll_accum_h = 0;
+int16_t scroll_accum_v = 0;
+
+int wiggle_count = 0;
+bool last_direction = false;
+uint16_t last_wiggle_time = 0;
+uint16_t last_switch_time = 0;
+
+report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+    int16_t x_before = mouse_report.x;
+    int16_t y_before = mouse_report.y;
+
+    if (timer_read() - last_switch_time > 250) {
+        if (timer_read() - last_wiggle_time > 150) {
+            wiggle_count = 0;
+        }
+
+        if (x_before > 1 && y_before < 3 && !last_direction) {
+            wiggle_count++;
+            last_wiggle_time = timer_read();
+            last_direction = !last_direction;
+        }
+        if (x_before < -1 && y_before < 3 && last_direction) {
+            wiggle_count++;
+            last_wiggle_time = timer_read();
+            last_direction = !last_direction;
+         }
+
+        if (wiggle_count > 3) {
+            is_scrolling = !is_scrolling;
+            wiggle_count = 0;
+            last_wiggle_time = 0;
+            last_switch_time = 0;
+         }
+      }
+
+    if (is_scrolling) {
+        scroll_accum_h += x_before;
+        scroll_accum_v += y_before;
+
+        if (scroll_accum_h > 150) {
+            mouse_report.h = 1;
+            scroll_accum_h = 0;
+         } else if (scroll_accum_h < -150) {
+            mouse_report.h = -1;
+            scroll_accum_h = 0;
+         }
+
+        if (scroll_accum_v > 150) {
+            mouse_report.v = -1;
+            scroll_accum_v = 0;
+         } else if (scroll_accum_v < -150) {
+            mouse_report.v = 1;
+            scroll_accum_v = 0;
+         }
+
+        mouse_report.x = 0;
+        mouse_report.y = 0;
+      } else {
+        mouse_report.h = 0;
+        mouse_report.v = 0;
+      }
+
+    return mouse_report;
+}
+
+
