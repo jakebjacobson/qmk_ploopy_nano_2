@@ -55,7 +55,7 @@ Wiggle toggle implementation adapted from [pandrr/wiggleball](https://github.com
 
 * [See the official documentation on docs.qmk.fm](https://docs.qmk.fm)
 
-## Supported Keyboards
+## Supported Trackballs
 
 * [Ploopy Nano 2](keyboards/ploopyco/nano_2/)
 
