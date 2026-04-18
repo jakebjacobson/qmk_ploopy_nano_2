@@ -21,7 +21,7 @@ See the [official programming instructions](https://ploopyco.github.io/nano-2-tr
 
 ## DPI Configuration
 
-The Ploopy Nano 2 only has one physical button, so there is no way to cycle DPI through the hardware. The trackball DPI is set to `1600` by default. To change it, edit the DPI options in code before flashing:
+The Ploopy Nano 2 only has one physical button, so cycling DPI through hardware input would require repurposing either the button click or the wiggle gesture for `DPI_CONFIG` — options that could be better used for click and scroll actions. The trackball DPI is set to `1600` by default. To change it, edit the DPI options in code before flashing:
 
 1. Open `keyboards/ploopyco/ploopyco.c`
 2. Find the `PLOOPY_DPI_OPTIONS` define (line 39) and change the values
